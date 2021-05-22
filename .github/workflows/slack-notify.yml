@@ -1,14 +1,19 @@
-on: push
-name: Slack Notification
+name: slack-notification
+
+on: [push, pull_request, issues]
+
 jobs:
-  slackNotification:
-    name: Slack Notification
-    runs-on: ubuntu-latest
+  slack-notifications:
+    runs-on: ubuntu-20.04
+    name: Sends a message to Slack when a push, a pull request or an issue is made
     steps:
-      - name: Notify slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+      - name: Send message to Slack API
+        uses: archive/github-actions-slack@v2.0.0
+        id: notify
         with:
-          args: '{\"channel\":\"C022JUZERK8\",\"text\":\"Hello world\"}'
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: C0234C0C9AM
+          slack-text: Hello! Event "${{ github.event_name }}" in "${{ github.repository }}" 🤓
+      - name: Result from "Send Message"
+        run: echo "The result was ${{ steps.notify.outputs.slack-result }}"
 
